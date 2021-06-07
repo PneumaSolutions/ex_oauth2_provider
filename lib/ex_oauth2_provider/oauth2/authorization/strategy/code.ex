@@ -104,8 +104,11 @@ defmodule ExOauth2Provider.Authorization.Code do
   end
 
   defp reissue_grant({:error, params}, _config), do: {:error, params}
-  defp reissue_grant({:ok, %{access_token: _access_token} = params}, config), do: issue_grant({:ok, params}, config)
-  defp reissue_grant({:ok, params}, _config), do: {:ok, params}
+  # NOTE: This is a dirty hack to skip the consent screen when doing
+  # an authorization request. It only makes sense for first-party apps.
+  # If we (Pneuma Solutions) ever support third-party client apps,
+  # we'll need to make this smarter.
+  defp reissue_grant({:ok, params}, config), do: issue_grant({:ok, params}, config)
 
   @doc """
   Authorizes an authorization code flow request.
